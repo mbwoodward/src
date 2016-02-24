@@ -1,4 +1,3 @@
-
 //needed includes
 #include <string>
 #include <iostream>
@@ -27,7 +26,7 @@ using namespace std;
 #include <SDL2/SDL_ttf.h>
 #endif
 
-//#include "turretbullet.h"
+#include "turretbullet.h"
 
 class Turret
 {
@@ -36,7 +35,7 @@ public:
 	bool active;
 
 	//variable to hold the list of bullets
-	//vector<TurretBullet> bulletList;
+	vector<TurretBullet> bulletList;
 
 	//string to hold the path to the turret's texture
 	string turretPath;
@@ -50,4 +49,32 @@ public:
 
 	//turret's SDL_Rect for the X, Y, W, and H of barrel texture
 	SDL_Rect barrelRect;
+
+	//vars used to get the angle between the turret's position and the tank's position
+	float x, y, turretangle;
+
+	//Point that will be used to rotate the turret - relative to the turret barrel's RECT
+	SDL_Point center;
+
+	//floats for fireTime and fireRate
+	float fireTime = 0.0f;
+	float fireRate = 1000.0f; //one second
+
+	//audio sound effect - CHUNK
+	Mix_Chunk *fire;
+
+	//Turret's creation method
+	Turret(SDL_Renderer *renderer, string filePath, string audioPath, float x, float y);
+
+	//update
+	void Update(float deltaTime, SDL_Rect tankRect);
+
+	//Draw
+	void Draw(SDL_Renderer *renderer);
+
+	//reset
+	void Reset();
+
+	//create a bullet
+	void CreateBullet(SDL_Rect target);
 };

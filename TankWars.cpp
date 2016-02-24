@@ -5,7 +5,7 @@
 #include <vector>
 #include <stdint.h>
 #include "tank.h"
-//#include "turret.h"
+#include "turret.h"
 
 
 using namespace std;
@@ -130,6 +130,7 @@ int main()
 	Tank tank1 = Tank(renderer, 0, images_dir.c_str(),audio_dir.c_str(), 50.0f, 50.0f);
 
 	//********Create Turret**********
+	Turret turret1 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 800.0f, 500.0f);
 
 	SDL_Texture *bkgd=IMG_LoadTexture(renderer, (images_dir+"background.png").c_str());
 
@@ -257,7 +258,7 @@ int main()
 		}
 
 		//update turret
-		//turret1.Update(deltaTime);
+		turret1.Update(deltaTime, tank1.posRect);
 
 		//DRAW SECTION
 		//Clear the SDL RenderTarget
@@ -270,7 +271,7 @@ int main()
 		tank1.Draw(renderer);
 
 		//Draw turret
-		//turret1.Draw(renderer);
+		turret1.Draw(renderer);
 
 		SDL_RenderPresent(renderer);
 	}
