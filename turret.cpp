@@ -58,6 +58,33 @@ Turret::Turret(SDL_Renderer *renderer, string filePath, string audioPath, float 
 
 	//random null init
 	srand(time(NULL));
+
+	//update float values for movement
+	posB_X = baseRect.x;
+	posB_Y = baseRect.y;
+
+	posT_X = barrelRect.x;
+	posT_Y = barrelRect.y;
+}
+
+void Turret::TankMoveX(float tankSpeed, float deltaTime)
+{
+	posB_X += (tankSpeed) * deltaTime;
+	posT_X += (tankSpeed) * deltaTime;
+
+	//Update position
+	baseRect.x = (int) (posB_X + 0.5f);
+	barrelRect.x = (int) (posT_X + 0.5f);
+}
+
+void Turret::TankMoveY(float tankSpeed, float deltaTime)
+{
+	posB_Y += (tankSpeed) * deltaTime;
+	posT_Y += (tankSpeed) * deltaTime;
+
+	//Update position
+	baseRect.y = (int) (posB_Y + 0.5f);
+	barrelRect.y = (int) (posT_Y + 0.5f);
 }
 
 //Turret Draw
@@ -92,7 +119,10 @@ void Turret::Update(float deltaTime, SDL_Rect tankRect)
 
 	if(SDL_GetTicks() > fireTime)
 	{
-		CreateBullet(tankRect);
+		if(baseRect.x > 0 && baseRect.x < 1024 && baseRect.y > 0 && baseRect.y < 768)
+		{
+			CreateBullet(tankRect);
+		}
 
 		fireTime = SDL_GetTicks() + (rand() % 3 + 1) * 1000;
 	}

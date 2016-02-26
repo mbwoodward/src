@@ -32,7 +32,7 @@
 	{
 		//get direction values to move with
 		float vX = ((player.x - 32) - turret.x) / distance;
-		float vY = ((player.y - 32) - turret.x) / distance;
+		float vY = ((player.y - 32) - turret.y) / distance;
 
 		//Increment the bullet position by vX and vY each frame
 		pos_X += (vX * speed * deltaTime);

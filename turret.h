@@ -1,4 +1,3 @@
-//needed includes
 #include <string>
 #include <iostream>
 
@@ -53,6 +52,9 @@ public:
 	//vars used to get the angle between the turret's position and the tank's position
 	float x, y, turretangle;
 
+	//float for the turret's position to avoid precision loss
+	float posB_X, posB_Y, posT_X, posT_Y;
+
 	//Point that will be used to rotate the turret - relative to the turret barrel's RECT
 	SDL_Point center;
 
@@ -77,4 +79,8 @@ public:
 
 	//create a bullet
 	void CreateBullet(SDL_Rect target);
+
+	void TankMoveX(float tankSpeed, float deltaTime);
+
+	void TankMoveY(float tankSpeed, float deltaTime);
 };

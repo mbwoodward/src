@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <sstream>
 #include "tank.h"
 #include "turret.h"
 
@@ -68,6 +69,76 @@ string images_dir = currentWorkingDirectory + "/src/";
 string audio_dir = currentWorkingDirectory + "/src/";
 #endif
 
+//Variable for font
+TTF_Font *font;
+
+//font color
+SDL_Color colorP1 = {255,255,255,255};
+
+//Surface for player hit text
+SDL_Surface *playerSurface, *turretSurface;
+
+//Textures for player hit
+SDL_Texture *playerTexture, *turretTexture;
+
+//SDL_Rects for player
+SDL_Rect playerPos, turretPos;
+
+//playerhealth
+int playerHealth = 100;
+
+string tempText = " ";
+
+void PlayerText(SDL_Renderer *renderer)
+{
+	string Result;
+	ostringstream convert;
+	convert << playerHealth;
+	Result = convert.str();
+
+	//create text
+	tempText = "Player Health: " + Result;
+
+	//surface for font string
+	playerSurface = TTF_RenderText_Solid(font, tempText.c_str(), colorP1);
+
+	//create player score
+	playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
+	//get width and height of texture
+	SDL_QueryTexture(playerTexture, NULL, NULL, &playerPos.w, &playerPos.h);
+
+	SDL_FreeSurface(playerSurface);
+}
+
+void TurretText(SDL_Renderer *renderer, int turretNum)
+{
+	string Result;
+	ostringstream convert;
+	convert << turretNum;
+	Result = convert.str();
+
+	//create text
+	tempText = "Turret " + Result + " was the last hit...";
+
+	//set to no turret hit
+	if(turretNum == 0)
+	{
+		//create text for font
+		tempText = "No Turret has been hit...";
+	}
+
+	//surface for font string
+	turretSurface = TTF_RenderText_Solid(font, tempText.c_str(), colorP1);
+
+	//create player score
+	turretTexture = SDL_CreateTextureFromSurface(renderer, turretSurface);
+
+	//get width and height of texture
+	SDL_QueryTexture(turretTexture, NULL, NULL, &turretPos.w, &turretPos.h);
+
+	SDL_FreeSurface(turretSurface);
+}
 //deltaTime var initialization - for frame rate independence
 float deltaTime = 0.0;
 int thisTime = 0;
@@ -131,6 +202,9 @@ int main()
 
 	//********Create Turret**********
 	Turret turret1 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 800.0f, 500.0f);
+	Turret turret2 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 1600.0f, 250.0f);
+	Turret turret3 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 400.0f, 1000.0f);
+	Turret turret4 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 1600.0f, 1250.0f);
 
 	SDL_Texture *bkgd=IMG_LoadTexture(renderer, (images_dir+"background.png").c_str());
 
@@ -144,6 +218,26 @@ int main()
 
 	float X_pos = 0.0f;
 	float Y_pos = 0.0f;
+
+	//init the ttf engine
+	TTF_Init();
+
+	//load Font
+	font = TTF_OpenFont((images_dir + "Gsubadaslowly.ttf").c_str(), 40);
+
+	//x and y for player's text
+	playerPos.x = 10;
+	playerPos.y = 10;
+
+	//x and y for turret
+	turretPos.x = 600;
+	turretPos.y = 10;
+
+	//create initial player text
+	PlayerText(renderer);
+
+	//create initial turret text
+	TurretText(renderer, 0);
 
 	//********MAIN GAME LOOP START*****************************************
 
@@ -209,7 +303,12 @@ int main()
 			if(bkgdRect.x > -1024){
 				//Update bullet position with code to account for precision loss
 				bkgdRect.x = (int)(X_pos + 0.5f);
-				//X_pos = bkgdRect.x;
+				//move turret
+				turret1.TankMoveX(-tank1.speed, deltaTime);
+				turret2.TankMoveX(-tank1.speed, deltaTime);
+				turret3.TankMoveX(-tank1.speed, deltaTime);
+				turret4.TankMoveX(-tank1.speed, deltaTime);
+
 			}else
 			{
 				X_pos=bkgdRect.x;
@@ -222,7 +321,11 @@ int main()
 			if(bkgdRect.x < 0){
 				//Update bullet position with code to account for precision loss
 				bkgdRect.x = (int)(X_pos + 0.5f);
-				//X_pos = bkgdRect.x;
+				turret1.TankMoveX(tank1.speed, deltaTime);
+				turret2.TankMoveX(tank1.speed, deltaTime);
+				turret3.TankMoveX(tank1.speed, deltaTime);
+				turret4.TankMoveX(tank1.speed, deltaTime);
+
 			}else
 			{
 				X_pos=bkgdRect.x;
@@ -237,7 +340,11 @@ int main()
 			if(bkgdRect.y > -768){
 				//Update bullet position with code to account for precision loss
 				bkgdRect.y = (int)(Y_pos + 0.5f);
-				//X_pos = bkgdRect.x;
+				turret1.TankMoveY(-tank1.speed, deltaTime);
+				turret2.TankMoveY(-tank1.speed, deltaTime);
+				turret3.TankMoveY(-tank1.speed, deltaTime);
+				turret4.TankMoveY(-tank1.speed, deltaTime);
+
 			}else
 			{
 				Y_pos=bkgdRect.y;
@@ -250,7 +357,12 @@ int main()
 			if(bkgdRect.y < 0){
 				//Update bullet position with code to account for precision loss
 				bkgdRect.y = (int)(Y_pos + 0.5f);
-				//X_pos = bkgdRect.x;
+				turret1.TankMoveY(tank1.speed, deltaTime);
+				turret2.TankMoveY(tank1.speed, deltaTime);
+				turret3.TankMoveY(tank1.speed, deltaTime);
+				turret4.TankMoveY(tank1.speed, deltaTime);
+
+
 			}else
 			{
 				Y_pos=bkgdRect.y;
@@ -259,6 +371,91 @@ int main()
 
 		//update turret
 		turret1.Update(deltaTime, tank1.posRect);
+		turret2.Update(deltaTime, tank1.posRect);
+		turret3.Update(deltaTime, tank1.posRect);
+		turret4.Update(deltaTime, tank1.posRect);
+
+		//check for hit from turrets
+		//1
+		for(int i =0; i<turret1.bulletList.size(); i++)
+		{
+			if(SDL_HasIntersection(&tank1.posRect, &turret1.bulletList[i].posRect))
+			{
+				turret1.bulletList[i].Reset();
+				playerHealth--;
+				PlayerText(renderer);
+				break;
+			}
+		}
+
+		//2
+		for(int i =0; i<turret2.bulletList.size(); i++)
+		{
+			if(SDL_HasIntersection(&tank1.posRect, &turret2.bulletList[i].posRect))
+			{
+				turret2.bulletList[i].Reset();
+				playerHealth--;
+				PlayerText(renderer);
+				break;
+			}
+		}
+
+		//3
+		for(int i =0; i<turret3.bulletList.size(); i++)
+		{
+			if(SDL_HasIntersection(&tank1.posRect, &turret3.bulletList[i].posRect))
+			{
+				turret3.bulletList[i].Reset();
+				playerHealth--;
+				PlayerText(renderer);
+				break;
+			}
+		}
+
+		//4
+		for(int i =0; i<turret4.bulletList.size(); i++)
+		{
+			if(SDL_HasIntersection(&tank1.posRect, &turret4.bulletList[i].posRect))
+			{
+				turret4.bulletList[i].Reset();
+				playerHealth--;
+				PlayerText(renderer);
+				break;
+			}
+		}
+
+		//check if player hit turret
+		for (int i=0; i < tank1.bulletList.size(); i++)
+		{
+			//turret 1
+			if(SDL_HasIntersection(&turret1.baseRect, &tank1.bulletList[i].posRect))
+			{
+				tank1.bulletList[i].Reset();
+				TurretText(renderer, 1);
+				break;
+			}
+			//turret 2
+			if(SDL_HasIntersection(&turret2.baseRect, &tank1.bulletList[i].posRect))
+			{
+				tank1.bulletList[i].Reset();
+				TurretText(renderer, 2);
+				break;
+			}
+			//turret 3
+			if(SDL_HasIntersection(&turret3.baseRect, &tank1.bulletList[i].posRect))
+			{
+				tank1.bulletList[i].Reset();
+				TurretText(renderer, 3);
+				break;
+			}
+			//turret 4
+			if(SDL_HasIntersection(&turret4.baseRect, &tank1.bulletList[i].posRect))
+			{
+				tank1.bulletList[i].Reset();
+				TurretText(renderer, 4);
+				break;
+			}
+		}
 
 		//DRAW SECTION
 		//Clear the SDL RenderTarget
@@ -272,6 +469,15 @@ int main()
 
 		//Draw turret
 		turret1.Draw(renderer);
+		turret2.Draw(renderer);
+		turret3.Draw(renderer);
+		turret4.Draw(renderer);
+
+		//Draw player hit texture
+		SDL_RenderCopy(renderer, playerTexture, NULL, &playerPos);
+
+		//Draw turret hit texture
+		SDL_RenderCopy(renderer, turretTexture, NULL, &turretPos);
 
 		SDL_RenderPresent(renderer);
 	}
