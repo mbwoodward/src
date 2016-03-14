@@ -169,7 +169,7 @@ void Tank::Draw(SDL_Renderer *renderer)
 	}
 
 	//draw the player texture using the vars texture and posRect
-	SDL_RenderCopyEx(renderer, texture, nullptr, &posRect, tankangle, &center, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(renderer, texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
 }
 
 void Tank::OnControllerButton(const SDL_ControllerButtonEvent event)

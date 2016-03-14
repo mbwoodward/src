@@ -7,6 +7,7 @@
 #include <sstream>
 #include "tank.h"
 #include "turret.h"
+#include "enemyTank.h"
 
 
 using namespace std;
@@ -153,10 +154,10 @@ int main()
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	//Create a SDL Window reference - pointer
-	SDL_Window *window = nullptr;
+	SDL_Window *window = NULL;
 
 	//Create a SDL RenderTarget - pointer
-	SDL_Renderer *renderer = nullptr;
+	SDL_Renderer *renderer = NULL;
 
 	//Create a SDL Window in the middle of the screen
 	window = SDL_CreateWindow("Tank Wars!",
@@ -205,6 +206,9 @@ int main()
 	Turret turret2 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 1600.0f, 250.0f);
 	Turret turret3 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 400.0f, 1000.0f);
 	Turret turret4 = Turret(renderer, images_dir.c_str(), audio_dir.c_str(), 1600.0f, 1250.0f);
+
+	//************Create enemyTank***************
+	EnemyTank eTank1 = EnemyTank(renderer, images_dir.c_str(), audio_dir.c_str(), 400.0f, 200.0f);
 
 	SDL_Texture *bkgd=IMG_LoadTexture(renderer, (images_dir+"background.png").c_str());
 
@@ -294,6 +298,7 @@ int main()
 		//update player 1 tank
 		tank1.Update(deltaTime);
 
+
 		//move background
 		if((tank1.posRect.x >= 1024 - tank1.posRect.w) && (tank1.Xvalue > 8000))
 		{
@@ -308,6 +313,9 @@ int main()
 				turret2.TankMoveX(-tank1.speed, deltaTime);
 				turret3.TankMoveX(-tank1.speed, deltaTime);
 				turret4.TankMoveX(-tank1.speed, deltaTime);
+
+				//move enemy tank
+				eTank1.eTankMoveX(-tank1.speed, deltaTime);
 
 			}else
 			{
@@ -325,6 +333,9 @@ int main()
 				turret2.TankMoveX(tank1.speed, deltaTime);
 				turret3.TankMoveX(tank1.speed, deltaTime);
 				turret4.TankMoveX(tank1.speed, deltaTime);
+
+				//move enemy tank
+				eTank1.eTankMoveX(tank1.speed, deltaTime);
 
 			}else
 			{
@@ -345,6 +356,9 @@ int main()
 				turret3.TankMoveY(-tank1.speed, deltaTime);
 				turret4.TankMoveY(-tank1.speed, deltaTime);
 
+				//move enemy tank
+				eTank1.eTankMoveY(-tank1.speed, deltaTime);
+
 			}else
 			{
 				Y_pos=bkgdRect.y;
@@ -362,6 +376,9 @@ int main()
 				turret3.TankMoveY(tank1.speed, deltaTime);
 				turret4.TankMoveY(tank1.speed, deltaTime);
 
+				//move enemy tank
+				eTank1.eTankMoveY(tank1.speed, deltaTime);
+
 
 			}else
 			{
@@ -374,6 +391,9 @@ int main()
 		turret2.Update(deltaTime, tank1.posRect);
 		turret3.Update(deltaTime, tank1.posRect);
 		turret4.Update(deltaTime, tank1.posRect);
+
+		//update enemy tank
+		eTank1.Update(deltaTime, tank1.posRect);
 
 		//check for hit from turrets
 		//1
@@ -455,6 +475,15 @@ int main()
 				TurretText(renderer, 4);
 				break;
 			}
+			//enemy tank
+			if(SDL_HasIntersection(&eTank1.eTankRect, &tank1.bulletList[i].posRect))
+			{
+				tank1.bulletList[i].Reset();
+				if(eTank1.active == true)
+				{
+				eTank1.RemoveHealth();
+				}
+			}
 		}
 
 		//DRAW SECTION
@@ -472,6 +501,8 @@ int main()
 		turret2.Draw(renderer);
 		turret3.Draw(renderer);
 		turret4.Draw(renderer);
+
+		eTank1.Draw(renderer);
 
 		//Draw player hit texture
 		SDL_RenderCopy(renderer, playerTexture, NULL, &playerPos);
