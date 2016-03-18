@@ -94,7 +94,7 @@ void EnemyTank::Update(float deltaTime, SDL_Rect tankRect)
 
 	double calcdistance = sqrt(distancex + distancey);
 
-	if(calcdistance <= 500)
+	if(calcdistance <= 350)
 	{
 		active = true;
 	}

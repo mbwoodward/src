@@ -32,6 +32,21 @@ class Tank
 {
 public:
 
+	//textures for health bar
+	SDL_Texture *back, *mid, *front;
+
+	//rect for health
+	SDL_Rect backR, midR, frontR;
+
+	//player health
+	float playerHealth, maxHealth;
+
+	//tank hit by eTank
+	void eTankHit();
+
+	//tank hit by bullet
+	void eBulletHit();
+
 	//is the player active - still alive?
 	bool active;
 
