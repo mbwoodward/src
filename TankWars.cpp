@@ -8,6 +8,7 @@
 #include "tank.h"
 #include "turret.h"
 #include "enemyTank.h"
+#include "jewel.h"
 
 
 using namespace std;
@@ -248,6 +249,43 @@ int main()
 	//create initial turret text
 	TurretText(renderer, 0);
 
+	//jewel hud
+	SDL_Texture *Jewelsbkgd = IMG_LoadTexture(renderer, (images_dir + "jewelsBKGD.png").c_str());
+	SDL_Rect JewelsbkgdRect;
+	JewelsbkgdRect.x = 370;
+	JewelsbkgdRect.y = 10;
+	JewelsbkgdRect.w = 284/2;
+	JewelsbkgdRect.h = 91/2;
+
+	SDL_Texture *purple = IMG_LoadTexture(renderer, (images_dir + "jewelsPurple.png").c_str());
+	SDL_Rect purplepos;
+	purplepos.x = 370;
+	purplepos.y = 10;
+	purplepos.w = 284/2;
+	purplepos.h = 91/2;
+
+	SDL_Texture *red = IMG_LoadTexture(renderer, (images_dir + "jewelsRed.png").c_str());
+	SDL_Rect redpos;
+	redpos.x = 370;
+	redpos.y = 10;
+	redpos.w = 284/2;
+	redpos.h = 91/2;
+
+	SDL_Texture *blue = IMG_LoadTexture(renderer, (images_dir + "jewelsBlue.png").c_str());
+	SDL_Rect bluepos;
+	bluepos.x = 370;
+	bluepos.y = 10;
+	bluepos.w = 284/2;
+	bluepos.h = 91/2;
+
+	bool havePurple = false;
+	bool haveRed = false;
+	bool haveBlue = false;
+
+	Jewel purpleJewel(Jewel(renderer, images_dir.c_str(), 0, 200.0f, 800.0f));
+	Jewel redJewel(Jewel(renderer, images_dir.c_str(), 1, 1200.0f, 350.0f));
+	Jewel blueJewel(Jewel(renderer, images_dir.c_str(), 2, 1600.0f, 1000.0f));
+
 	//********MAIN GAME LOOP START*****************************************
 
 	while(!quit)
@@ -325,6 +363,11 @@ int main()
 				eTank3.eTankMoveX(-tank1.speed, deltaTime);
 				eTank4.eTankMoveX(-tank1.speed, deltaTime);
 
+				//move jewels
+				purpleJewel.TankMoveX(-tank1.speed, deltaTime);
+				redJewel.TankMoveX(-tank1.speed, deltaTime);
+				blueJewel.TankMoveX(-tank1.speed, deltaTime);
+
 			}else
 			{
 				X_pos=bkgdRect.x;
@@ -347,6 +390,11 @@ int main()
 				eTank2.eTankMoveX(tank1.speed, deltaTime);
 				eTank3.eTankMoveX(tank1.speed, deltaTime);
 				eTank4.eTankMoveX(tank1.speed, deltaTime);
+
+				//move jewels
+				purpleJewel.TankMoveX(tank1.speed, deltaTime);
+				redJewel.TankMoveX(tank1.speed, deltaTime);
+				blueJewel.TankMoveX(tank1.speed, deltaTime);
 
 			}else
 			{
@@ -373,6 +421,11 @@ int main()
 				eTank3.eTankMoveY(-tank1.speed, deltaTime);
 				eTank4.eTankMoveY(-tank1.speed, deltaTime);
 
+				//move jewels
+				purpleJewel.TankMoveY(-tank1.speed, deltaTime);
+				redJewel.TankMoveY(-tank1.speed, deltaTime);
+				blueJewel.TankMoveY(-tank1.speed, deltaTime);
+
 
 			}else
 			{
@@ -396,6 +449,11 @@ int main()
 				eTank2.eTankMoveY(tank1.speed, deltaTime);
 				eTank3.eTankMoveY(tank1.speed, deltaTime);
 				eTank4.eTankMoveY(tank1.speed, deltaTime);
+
+				//move jewels
+				purpleJewel.TankMoveY(tank1.speed, deltaTime);
+				redJewel.TankMoveY(tank1.speed, deltaTime);
+				blueJewel.TankMoveY(tank1.speed, deltaTime);
 
 
 
@@ -576,6 +634,34 @@ int main()
 				eTank4.RemoveHealth();
 				}
 			}
+
+			//check to see jewels
+			//purple
+			if(SDL_HasIntersection(&tank1.posRect, &purpleJewel.jewelRect))
+			{
+				havePurple = true;
+				purpleJewel.active = false;
+				purpleJewel.jewelRect.x = -5000;
+				purpleJewel.jewelRect.y = -5000;
+			}
+
+			//red
+			if(SDL_HasIntersection(&tank1.posRect, &redJewel.jewelRect))
+			{
+				haveRed = true;
+				redJewel.active = false;
+				redJewel.jewelRect.x = -5000;
+				redJewel.jewelRect.y = -5000;
+			}
+
+			//blue
+			if(SDL_HasIntersection(&tank1.posRect, &blueJewel.jewelRect))
+			{
+				haveBlue = true;
+				blueJewel.active = false;
+				blueJewel.jewelRect.x = -5000;
+				blueJewel.jewelRect.y = -5000;
+			}
 		}
 
 		//DRAW SECTION
@@ -584,6 +670,44 @@ int main()
 
 		//Draw Background
 		SDL_RenderCopy(renderer, bkgd, NULL, &bkgdRect);
+
+		//draw jewelsbkgd
+		SDL_RenderCopy(renderer, Jewelsbkgd, NULL, &JewelsbkgdRect);
+
+
+
+		//draw purple
+		if(havePurple)
+		{
+		SDL_RenderCopy(renderer, purple, NULL, &purplepos);
+		}
+
+		//draw red
+		if(haveRed){
+		SDL_RenderCopy(renderer, red, NULL, &redpos);
+		}
+
+		//draw blue
+		if(haveBlue)
+		{
+		SDL_RenderCopy(renderer, blue, NULL, &bluepos);
+		}
+
+		if(purpleJewel.active)
+		{
+			purpleJewel.Draw(renderer);
+		}
+
+		if(redJewel.active)
+		{
+			redJewel.Draw(renderer);
+		}
+
+		if(blueJewel.active)
+		{
+			blueJewel.Draw(renderer);
+		}
+
 
 		//Draw player1 tank
 		tank1.Draw(renderer);
