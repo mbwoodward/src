@@ -27,6 +27,13 @@ Jewel::Jewel(SDL_Renderer *renderer, string filePath, int color, float x, float 
 
 		//load image
 		jewel = IMG_LoadTexture(renderer, basePath.c_str());
+	}else if(color==3)
+	{
+		//Create the jewel file path
+		string basePath = filePath + "folderPickup.png";
+
+		//load image
+		jewel = IMG_LoadTexture(renderer, basePath.c_str());
 	}
 
 	//set SDL_Rect x and y for image
